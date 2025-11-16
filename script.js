@@ -90,7 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderStampBook = () => {
         currentMonthEl.textContent = `${month + 1}月`; stampCard.innerHTML = '';
         studyData.forEach((data, index) => {
-            const slot = document.createElement('div'); slot.classList.add('slot');
+            const slot = document.createElement('div'); slot.classList.add('stamp-slot');
             const icon = document.createElement('div'); icon.classList.add('stamp-icon'); icon.textContent = index + 1;
             if (data.minutes > 0) { icon.classList.add('stamped'); icon.textContent = ''; }
             const timeDisplay = document.createElement('div'); timeDisplay.classList.add('time-display'); timeDisplay.textContent = `${data.minutes || 0} 分`;
@@ -126,6 +126,30 @@ document.addEventListener('DOMContentLoaded', () => {
     backToTimerButton.addEventListener('click', () => { resetTimerState(); showScreen('timer'); });
     userNameInput.addEventListener('change', saveData);
     goalTimeInput.addEventListener('change', () => { saveData(); updateTotal(); });
+
+    // --- 全データリセット機能 ---
+    const fullResetButton = document.getElementById('full-reset-button');
+    if (fullResetButton) {
+        fullResetButton.addEventListener('click', () => {
+            const enteredPassword = prompt('全データをリセットするには、保護者のパスワードを入力してください。');
+            if (enteredPassword === null) {
+                alert('リセットはキャンセルされました。');
+                return;
+            }
+            if (enteredPassword === PASSWORD) {
+                const isConfirmed = confirm('パスワードが認証されました。\n\n本当にすべてのデータ（今までの月の記録、名前、目標）を削除しますか？\nこの操作は元に戻せません。');
+                if (isConfirmed) {
+                    localStorage.clear();
+                    alert('すべてのデータをリセットしました。ページを再読み込みします。');
+                    location.reload();
+                } else {
+                    alert('リセットはキャンセルされました。');
+                }
+            } else {
+                alert('パスワードが違います。リセットはキャンセルされました。');
+            }
+        });
+    }
 
     // --- 初期化 ---
     loadData();

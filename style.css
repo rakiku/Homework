@@ -18,6 +18,14 @@ h1, h2, h3 { color: #4682b4; }
 .button-break { background-color: #ffc107; color: #333; } .button-break:hover { background-color: #e0a800; }
 .button-finish { background-color: #dc3545; } .button-finish:hover { background-color: #c82333; }
 .button-confirm { background-color: #007bff; } .button-confirm:hover { background-color: #0069d9; }
+.button-danger {
+    background-color: #6c757d; /* 落ち着いた灰色 */
+    font-size: 0.9em; /* 少し小さくして目立ちすぎないように */
+    padding: 10px 20px;
+}
+.button-danger:hover {
+    background-color: #dc3545; /* ホバー時は警告の赤色に */
+}
 #result-text, #password-prompt { font-size: 1.2em; margin-bottom: 20px; line-height: 1.6; }
 #password-input { font-size: 1.2em; padding: 10px; max-width: 200px; width: 80%; text-align: center; border: 2px solid #ccc; border-radius: 5px; }
 #stamp-book-header { display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 20px; gap: 20px; text-align: left; }

@@ -3,54 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>宿題がんばり＆スタンプちょう</title>
-    <style>
-        /* CSSは前回のスマホ対応版から変更ありません */
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f0f8ff; color: #333; text-align: center; padding: 20px; margin: 0; }
-        .screen { display: none; }
-        #app-container { max-width: 800px; margin: 0 auto; }
-        .card { background-color: #fff; padding: 30px; border-radius: 15px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
-        h1, h2, h3 { color: #4682b4; }
-        .timer-display { font-size: 6em; font-weight: bold; color: #333; margin: 20px 0; }
-        .button { display: inline-block; padding: 15px 30px; font-size: 1.2em; color: #fff; border: none; border-radius: 8px; cursor: pointer; transition: all 0.3s; margin: 10px; }
-        .button-start { background-color: #28a745; } .button-start:hover { background-color: #218838; }
-        .button-break { background-color: #ffc107; color: #333; } .button-break:hover { background-color: #e0a800; }
-        .button-finish { background-color: #dc3545; } .button-finish:hover { background-color: #c82333; }
-        .button-confirm { background-color: #007bff; } .button-confirm:hover { background-color: #0069d9; }
-        #result-text, #password-prompt { font-size: 1.2em; margin-bottom: 20px; }
-        #password-input { font-size: 1.2em; padding: 10px; max-width: 200px; width: 80%; text-align: center; border: 2px solid #ccc; border-radius: 5px; }
-        #stamp-book-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; gap: 20px; }
-        #user-info, #month-info, #goal-info { flex: 1; background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        #month-info, #goal-info { text-align: center; }
-        #user-name-input, #goal-time-input { border: 1px solid #ddd; padding: 5px; border-radius: 5px; width: 120px; max-width: 100%; box-sizing: border-box; }
-        #reward-info { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.9em; }
-        #reward-info strong { color: #e63946; }
-        #total-time { font-size: 1.5em; font-weight: bold; color: #e63946; }
-        #goal-progress { font-size: 1.2em; font-weight: bold; }
-        #stamp-card { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
-        .stamp-slot { background-color: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
-        .stamp-icon { width: 100%; aspect-ratio: 1/1; background-color: #e0e0e0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5em; font-weight: bold; color: #aaa; margin-bottom: 10px; }
-        .stamp-icon.stamped { background-color: #ffd700; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f31f.png'); background-size: 70%; background-repeat: no-repeat; background-position: center; }
-        .time-display { font-size: 0.9em; font-weight: bold; color: #007bff; text-align: center; }
-
-        @media (max-width: 768px) {
-            body { padding: 10px; } .card { padding: 20px; } .timer-display { font-size: 18vw; }
-            .button { padding: 12px 20px; font-size: 1em; width: 45%; box-sizing: border-box; }
-            #start-button, #back-to-timer-button { width: 80%; }
-            #stamp-book-header { flex-direction: column; gap: 15px; }
-            #user-info, #month-info, #goal-info { width: 100%; box-sizing: border-box; }
-            #stamp-card { gap: 5px; } .stamp-icon { font-size: 1.2em; } .time-display { font-size: 0.7em; }
-        }
-    </style>
+    <title>宿題チェック</title>
+    <!-- CSSファイルをここで読み込みます -->
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+
 <div id="app-container">
-    <!-- 各画面のHTMLは変更なし -->
+
+    <!-- 画面1: タイマー画面 -->
     <div id="timer-screen" class="screen">
         <div class="card">
             <h2 id="timer-title">しゅくだいタイマー</h2>
             <div id="study-timer-display" class="timer-display">00:00</div>
             <div id="break-timer-display" class="timer-display" style="display:none;">00:00</div>
+            
             <button id="start-button" class="button button-start">宿題 開始！</button>
             <div id="during-study-buttons" style="display: none;">
                 <button id="break-button" class="button button-break">休憩する</button>
@@ -61,123 +28,51 @@
             </div>
         </div>
     </div>
-    <div id="result-screen" class="screen"><!-- ... --></div>
-    <div id="stamp-book-screen" class="screen"><!-- ... --></div>
+
+    <!-- 画面2: 結果＆パスワード画面 -->
+    <div id="result-screen" class="screen">
+        <div class="card">
+            <h2>おつかれさま！</h2>
+            <p id="result-text"></p>
+            <hr>
+            <p id="password-prompt">おうちの人にパスワードを<br>入れてもらってね。</p>
+            <input type="password" id="password-input" placeholder="パスワード">
+            <button id="password-submit-button" class="button button-confirm">OK</button>
+            <div id="confirm-area" style="display:none;">
+                <p>よくがんばりました！</p>
+                <button id="go-to-stamp-book-button" class="button button-confirm">スタンプ帳をひらく</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 画面3: スタンプ帳画面 -->
+    <div id="stamp-book-screen" class="screen">
+        <div id="stamp-book-header">
+            <div id="user-info">
+                <h3>なまえ</h3>
+                <input type="text" id="user-name-input" placeholder="なまえをいれてね">
+                <div id="reward-info">
+                    <!-- ご褒美情報はここに表示 -->
+                </div>
+            </div>
+            <div id="month-info">
+                <h2 id="current-month"></h2>
+                <p>合計: <span id="total-time">0</span> 分</p>
+            </div>
+            <div id="goal-info">
+                <h3>今月の目標</h3>
+                <input type="number" id="goal-time-input" placeholder="例: 1000"> 分
+                <p id="goal-progress">--%</p>
+            </div>
+        </div>
+        <div id="stamp-card" class="card"></div>
+        <button id="back-to-timer-button" class="button button-start">タイマーにもどる</button>
+    </div>
+
 </div>
 
-<!-- JavaScriptに機能追加 -->
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-    // --- 設定項目 ---
-    const PASSWORD = '1234';
-    const REWARDS = [ /* ... ご褒美設定は変更なし ... */ ];
-    
-    // --- 要素取得（変更なし） ---
-    // ...
-    
-    // --- 変数 ---
-    let studySeconds = 0, breakSeconds = 0, studyTimer, breakTimer, studyData = [];
-    let wakeLock = null; // ★追加機能：スクリーンロック防止用
-    let timerState = 'stopped'; // ★追加機能：タイマーの状態を管理
+<!-- JavaScriptファイルをここで読み込みます -->
+<script src="script.js"></script>
 
-    // ... その他の変数 ...
-
-    // --- ★追加機能：画面スリープを防止する関数 ---
-    const requestWakeLock = async () => {
-        if ('wakeLock' in navigator) {
-            try {
-                wakeLock = await navigator.wakeLock.request('screen');
-                console.log('画面のスリープを防止します。');
-            } catch (err) {
-                console.error(`${err.name}, ${err.message}`);
-            }
-        }
-    };
-
-    // --- ★追加機能：画面スリープ防止を解除する関数 ---
-    const releaseWakeLock = async () => {
-        if (wakeLock !== null) {
-            await wakeLock.release();
-            wakeLock = null;
-            console.log('画面のスリープ防止を解除しました。');
-        }
-    };
-    
-    // --- ★追加機能：画面の表示/非表示を検知する処理 ---
-    const handleVisibilityChange = () => {
-        if (document.visibilityState === 'hidden') {
-            // 画面が隠れた時、動いているタイマーを止める
-            if (timerState === 'studying' || timerState === 'break') {
-                clearInterval(studyTimer);
-                clearInterval(breakTimer);
-                timerTitle.textContent = "一時停止中...";
-                console.log('タブが非表示になったためタイマーを一時停止しました。');
-            }
-        } else if (document.visibilityState === 'visible') {
-            // 画面が再表示された時
-            if (timerState === 'studying') {
-                // 勉強中だったら、勉強タイマーを再開
-                startStudyTimer();
-                timerTitle.textContent = "しゅくだいタイマー";
-                requestWakeLock(); // スリープ防止も再開
-            } else if (timerState === 'break') {
-                // 休憩中だったら、休憩タイマーを再開
-                startBreakTimer();
-                timerTitle.textContent = "きゅうけい中...";
-            }
-        }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-
-    // --- 既存の関数を一部修正 ---
-    function startStudyTimer() {
-        clearInterval(studyTimer);
-        timerState = 'studying'; // 状態を更新
-        studyTimer = setInterval(() => { studySeconds++; studyTimerDisplay.textContent = formatTime(studySeconds); }, 1000);
-    }
-    function startBreakTimer() {
-        clearInterval(breakTimer);
-        timerState = 'break'; // 状態を更新
-        breakTimer = setInterval(() => { breakSeconds++; breakTimerDisplay.textContent = formatTime(breakSeconds); }, 1000);
-    }
-
-    // --- イベントリスナーを一部修正 ---
-    startButton.addEventListener('click', () => {
-        // ... (タイマー開始処理)
-        startStudyTimer();
-        requestWakeLock(); // ★追加: 勉強開始時にスリープ防止を開始
-        // ... (UI変更処理)
-    });
-
-    breakButton.addEventListener('click', () => {
-        clearInterval(studyTimer);
-        releaseWakeLock(); // ★追加: 休憩開始時にスリープ防止を解除
-        startBreakTimer();
-        // ... (UI変更処理)
-    });
-
-    resumeButton.addEventListener('click', () => {
-        clearInterval(breakTimer);
-        requestWakeLock(); // ★追加: 勉強再開時にスリープ防止を開始
-        startStudyTimer();
-        // ... (UI変更処理)
-    });
-
-    finishButton.addEventListener('click', () => {
-        clearInterval(studyTimer);
-        releaseWakeLock(); // ★追加: 終了時にスリープ防止を解除
-        timerState = 'stopped'; // 状態を更新
-        // ... (UI変更処理)
-    });
-    
-    backToTimerButton.addEventListener('click', () => {
-        resetTimerState();
-        timerState = 'stopped'; // ★追加: 状態をリセット
-        showScreen('timer');
-    });
-
-    // ... その他の関数とイベントリスナー（変更なし） ...
-});
-</script>
 </body>
 </html>

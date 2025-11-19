@@ -4,10 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const PASSWORD = '1234';
     // ご褒美リストです。ポイント(合計勉強分)が低い順に並べてください。
     const REWARDS = [
-        { points: 300,  name: '好きなおやつ' },
-        { points: 600,  name: 'ゲーム30分プラス' },
-        { points: 1000, name: '好きな本を買ってもらう' },
-        { points: 1500, name: '週末に公園へ行く' }
+        { points: 500,  name: 'お小遣い500円' },
+        { points: 1000,  name: 'お小遣い1000円' },
+        { points: 1500, name: 'お小遣い1500円' },
+        { points: 2000, name: 'お小遣い2000円' }
     ];
 
     // --- 要素取得 ---

@@ -1,7 +1,7 @@
 // ▼▼▼ "DOMContentLoaded" が defer 属性により不要になる場合がありますが、念のため残しておきます ▼▼▼
 document.addEventListener('DOMContentLoaded', () => {
     // --- ★設定項目 ---
-    const PASSWORD = '1234';
+    const PASSWORD = '5961';
     const REWARDS = [
         { points: 500,  name: 'お小遣い500円' }, { points: 1000,  name: 'お小遣い1000円' },
         { points: 1500, name: 'お小遣い1500円' }, { points: 2000, name: 'お小遣い2000円' }

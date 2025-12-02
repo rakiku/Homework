@@ -51,9 +51,7 @@
             <div id="user-info">
                 <h3>なまえ</h3>
                 <input type="text" id="user-name-input" placeholder="なまえをいれてね">
-                <div id="reward-info">
-                    <!-- ご褒美情報はここに表示 -->
-                </div>
+                <div id="reward-info"></div>
             </div>
             <div id="month-info">
                 <h2 id="current-month"></h2>
@@ -65,15 +63,33 @@
                 <p id="goal-progress">--%</p>
             </div>
         </div>
+        <p style="color: #6c757d; font-size: 0.9em;">（日付のマスをクリックすると、時間を手動で修正できます）</p>
         <div id="stamp-card" class="card"></div>
-        <button id="back-to-timer-button" class="button button-start">タイマーにもどる</button>
-        <button id="full-reset-button" class="button button-danger">全データリセット</button>
+        <div class="button-group">
+            <button id="history-button" class="button button-secondary">過去の記録を見る</button>
+            <button id="back-to-timer-button" class="button button-start">タイマーにもどる</button>
+            <button id="full-reset-button" class="button button-danger">全データリセット</button>
+        </div>
+    </div>
+    
+    <!-- 画面4: 履歴表示画面 -->
+    <div id="history-screen" class="screen modal-overlay">
+        <div class="card modal-content">
+            <h2>過去のきろく</h2>
+            <select id="month-selector"></select>
+            <div id="history-summary"></div>
+            <div id="history-card" class="card"></div>
+            <button id="history-back-button" class="button button-secondary">もどる</button>
+        </div>
     </div>
 
 </div>
 
-<!-- JavaScriptファイルをここで読み込みます -->
-<script src="script.js"></script>
+<!-- アラーム音用の非表示オーディオ要素 -->
+<audio id="alarm-sound" src="https://freesound.org/data/previews/219/219244_4053677-lq.mp3" preload="auto"></audio>
+
+<!-- ▼▼▼ "defer" を追加して、HTML読み込み後にスクリプトを実行するように修正 ▼▼▼ -->
+<script src="script.js" defer></script>
 
 </body>
 </html>

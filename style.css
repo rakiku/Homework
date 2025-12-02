@@ -6,7 +6,7 @@ body {
     text-align: center;
     padding: 20px;
     margin: 0;
-    -webkit-tap-highlight-color: transparent; /* スマホでタップ時のハイライトを消す */
+    -webkit-tap-highlight-color: transparent;
 }
 .screen { display: none; }
 #app-container { max-width: 800px; margin: 0 auto; }
@@ -18,40 +18,71 @@ h1, h2, h3 { color: #4682b4; }
 .button-break { background-color: #ffc107; color: #333; } .button-break:hover { background-color: #e0a800; }
 .button-finish { background-color: #dc3545; } .button-finish:hover { background-color: #c82333; }
 .button-confirm { background-color: #007bff; } .button-confirm:hover { background-color: #0069d9; }
-.button-danger {
-    background-color: #6c757d; /* 落ち着いた灰色 */
-    font-size: 0.9em; /* 少し小さくして目立ちすぎないように */
-    padding: 10px 20px;
-}
-.button-danger:hover {
-    background-color: #dc3545; /* ホバー時は警告の赤色に */
-}
+.button-secondary { background-color: #007bff; } .button-secondary:hover { background-color: #0069d9; }
+.button-danger { background-color: #6c757d; font-size: 0.9em; padding: 10px 20px; }
+.button-danger:hover { background-color: #dc3545; }
+.button-group { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; margin-top: 20px; }
+
 #result-text, #password-prompt { font-size: 1.2em; margin-bottom: 20px; line-height: 1.6; }
 #password-input { font-size: 1.2em; padding: 10px; max-width: 200px; width: 80%; text-align: center; border: 2px solid #ccc; border-radius: 5px; }
 #stamp-book-header { display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 20px; gap: 20px; text-align: left; }
 #user-info, #month-info, #goal-info { flex: 1; background-color: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 #month-info, #goal-info { text-align: center; }
 #user-name-input, #goal-time-input { border: 1px solid #ddd; padding: 5px; border-radius: 5px; width: 120px; max-width: 100%; box-sizing: border-box; }
-#reward-info { margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee; font-size: 0.9em; }
-#reward-info strong { color: #e63946; }
 #total-time { font-size: 1.5em; font-weight: bold; color: #e63946; }
 #goal-progress { font-size: 1.2em; font-weight: bold; }
-#stamp-card { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
+#stamp-card, #history-card { display: grid; grid-template-columns: repeat(7, 1fr); gap: 15px; }
+#history-card { margin-top: 20px; }
 .stamp-slot { background-color: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
 .stamp-icon { width: 100%; aspect-ratio: 1/1; background-color: #e0e0e0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5em; font-weight: bold; color: #aaa; margin-bottom: 10px; }
 .stamp-icon.stamped { background-color: #ffd700; background-image: url('https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/72x72/1f31f.png'); background-size: 70%; background-repeat: no-repeat; background-position: center; }
 .time-display { font-size: 0.9em; font-weight: bold; color: #007bff; text-align: center; }
+
+/* ▼▼▼ ここから追加・修正 ▼▼▼ */
+#reward-info h4 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+    color: #4682b4;
+    font-size: 1em;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 3px;
+}
+#reward-info ul {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 5px 0;
+}
+#reward-info li {
+    color: #28a745; /* 達成済みの色は緑 */
+    font-weight: bold;
+    margin-bottom: 3px;
+}
+#reward-info p {
+    margin: 5px 0;
+}
+/* ▲▲▲ ここまで追加・修正 ▲▲▲ */
+
+/* 履歴表示用モーダルのスタイル */
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center;
+    z-index: 1000;
+}
+.modal-content { max-width: 90%; width: 700px; }
+#month-selector { font-size: 1.2em; padding: 10px; margin-bottom: 20px; }
+#history-summary { font-size: 1.2em; font-weight: bold; }
 
 /* --- スマホ対応スタイル --- */
 @media (max-width: 768px) {
     body { padding: 10px; }
     .card { padding: 20px; }
     .timer-display { font-size: 18vw; }
-    .button { padding: 12px 20px; font-size: 1em; width: 45%; box-sizing: border-box; }
-    #start-button, #back-to-timer-button { width: 80%; }
+    .button { padding: 12px 20px; font-size: 1em; width: 80%; box-sizing: border-box; }
+    .button-group .button { width: auto; font-size: 0.8em; padding: 8px 12px; }
+    #during-study-buttons .button, #during-break-buttons .button { width: 45%; }
     #stamp-book-header { flex-direction: column; gap: 15px; }
     #user-info, #month-info, #goal-info { width: 100%; box-sizing: border-box; }
-    #stamp-card { gap: 5px; }
+    #stamp-card, #history-card { gap: 5px; }
     .stamp-icon { font-size: 1.2em; }
     .time-display { font-size: 0.7em; }
 }

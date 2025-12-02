@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>宿題がんばり＆スタンプちょう</title>
-    <!-- CSSファイルをここで読み込みます -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,12 +18,18 @@
             <div id="break-timer-display" class="timer-display" style="display:none;">00:00</div>
             
             <button id="start-button" class="button button-start">宿題 開始！</button>
+            
+            <!-- ▼▼▼ ここからボタンの構成を変更 ▼▼▼ -->
             <div id="during-study-buttons" style="display: none;">
                 <button id="break-button" class="button button-break">休憩する</button>
                 <button id="finish-button" class="button button-finish">終了する</button>
             </div>
             <div id="during-break-buttons" style="display: none;">
-                <button id="resume-button" class="button button-start">再開する</button>
+                <button id="resume-from-break-button" class="button button-start">勉強にもどる</button>
+            </div>
+            <!-- ▼▼▼ システムによる一時停止時に表示するボタンを追加 ▼▼▼ -->
+            <div id="system-paused-buttons" style="display: none;">
+                <button id="resume-from-pause-button" class="button button-start">再開する</button>
             </div>
         </div>
     </div>
@@ -88,7 +93,6 @@
 <!-- アラーム音用の非表示オーディオ要素 -->
 <audio id="alarm-sound" src="https://freesound.org/data/previews/219/219244_4053677-lq.mp3" preload="auto"></audio>
 
-<!-- ▼▼▼ "defer" を追加して、HTML読み込み後にスクリプトを実行するように修正 ▼▼▼ -->
 <script src="script.js" defer></script>
 
 </body>

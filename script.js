@@ -1,3 +1,4 @@
+// ▼▼▼ "DOMContentLoaded" が defer 属性により不要になる場合がありますが、念のため残しておきます ▼▼▼
 document.addEventListener('DOMContentLoaded', () => {
     // --- ★設定項目 ---
     const PASSWORD = '1234';
@@ -37,22 +38,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- データ処理関数 ---
     const loadData = () => { const daysInMonth = new Date(year, month + 1, 0).getDate(); studyData = JSON.parse(localStorage.getItem(storageKey)) || Array.from({ length: daysInMonth }, () => ({ minutes: 0 })); const settings = JSON.parse(localStorage.getItem('userSettings')) || {}; userNameInput.value = settings.name || ''; goalTimeInput.value = settings.goal || ''; };
     const saveData = () => { localStorage.setItem(storageKey, JSON.stringify(studyData)); localStorage.setItem('userSettings', JSON.stringify({ name: userNameInput.value, goal: goalTimeInput.value })); };
-    
-    // ▼▼▼ 変更点：ご褒美表示のロジックを更新 ▼▼▼
     const updateRewardDisplay = (totalMinutes) => {
         const achievedRewards = REWARDS.filter(r => totalMinutes >= r.points);
         const nextReward = REWARDS.find(r => totalMinutes < r.points);
-        
         let html = '';
-
         if (achievedRewards.length > 0) {
             html += '<h4>達成したごほうび</h4><ul>';
-            achievedRewards.forEach(reward => {
-                html += `<li>✅ ${reward.name}</li>`;
-            });
+            achievedRewards.forEach(reward => { html += `<li>✅ ${reward.name}</li>`; });
             html += '</ul>';
         }
-
         if (nextReward) {
             html += '<h4>次のごほうび</h4>';
             const needed = nextReward.points - totalMinutes;
@@ -60,26 +54,73 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             html += '<h4>すごい！</h4><p><strong>すべての ごほうびを ゲットしたね！</strong></p>';
         }
-        
         rewardInfoEl.innerHTML = html;
     };
-    
     const updateTotal = (data, element) => { const totalMinutes = data.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0); element.textContent = totalMinutes; return totalMinutes; };
-    const renderCalendar = (cardElement, data) => { cardElement.innerHTML = ''; data.forEach((d, index) => { const slot = document.createElement('div'); slot.classList.add('stamp-slot'); const icon = document.createElement('div'); icon.classList.add('stamp-icon'); icon.textContent = index + 1; if (d.minutes > 0) { icon.classList.add('stamped'); icon.textContent = ''; } const timeDisplay = document.createElement('div'); timeDisplay.classList.add('time-display'); timeDisplay.textContent = `${d.minutes || 0} 分`; slot.appendChild(icon); slot.appendChild(timeDisplay); cardElement.appendChild(slot); }); };
+    
+    // ▼▼▼ ここからが主な変更点 ▼▼▼
+    const renderCalendar = (cardElement, data, isEditable = false) => {
+        cardElement.innerHTML = '';
+        data.forEach((d, index) => {
+            const slot = document.createElement('div'); slot.classList.add('stamp-slot');
+            const icon = document.createElement('div'); icon.classList.add('stamp-icon'); icon.textContent = index + 1;
+            if (d.minutes > 0) { icon.classList.add('stamped'); icon.textContent = ''; }
+            const timeDisplay = document.createElement('div'); timeDisplay.classList.add('time-display'); timeDisplay.textContent = `${d.minutes || 0} 分`;
+            slot.appendChild(icon); slot.appendChild(timeDisplay);
+            cardElement.appendChild(slot);
+
+            // ★★★ 手動修正機能を追加 ★★★
+            // isEditableがtrueのときだけ、クリックイベントを追加する
+            if (isEditable) {
+                slot.addEventListener('click', () => {
+                    const enteredPassword = prompt(`【保護者メニュー】\n${index + 1}日の記録を修正します。\nパスワードを入力してください。`);
+                    if (enteredPassword === null) return;
+
+                    if (enteredPassword === PASSWORD) {
+                        const currentMinutes = d.minutes || 0;
+                        const newMinutesStr = prompt(`${index + 1}日の現在の記録は ${currentMinutes}分です。\n新しい合計時間（分）を入力してください。\n（0を入力するとリセットされます）`, currentMinutes);
+                        if (newMinutesStr === null) return;
+                        
+                        const newMinutes = parseInt(newMinutesStr, 10);
+                        if (!isNaN(newMinutes) && newMinutes >= 0) {
+                            studyData[index].minutes = newMinutes;
+                            saveData();
+                            // 画面を即座に更新
+                            renderCalendar(stampCard, studyData, true);
+                            const totalM = updateTotal(studyData, totalTimeEl);
+                            updateRewardDisplay(totalM);
+                            alert(`${index + 1}日の記録を${newMinutes}分に更新しました。`);
+                        } else {
+                            alert('無効な数字です。半角数字で入力してください。');
+                        }
+                    } else {
+                        alert('パスワードが違います。');
+                    }
+                });
+            }
+        });
+    };
+    // ▲▲▲ ここまでが主な変更点 ▲▲▲
+
     const resetTimerState = () => { clearInterval(studyTimer); clearInterval(breakTimer); releaseWakeLock(); timerState = 'stopped'; localStorage.removeItem('timerState'); studySeconds = 0; breakSeconds = 0; studyTimerDisplay.textContent = '00:00'; breakTimerDisplay.textContent = '00:00'; startButton.style.display = 'block'; duringStudyButtons.style.display = 'none'; duringBreakButtons.style.display = 'none'; studyTimerDisplay.style.display = 'block'; breakTimerDisplay.style.display = 'none'; timerTitle.textContent = "しゅくだいタイマー"; passwordInput.value = ''; passwordInput.disabled = false; passwordInput.style.borderColor = '#ccc'; confirmArea.style.display = 'none'; passwordSubmitButton.style.display = 'inline-block'; };
 
-    // --- イベントリスナー設定 (変更なし) ---
+    // --- イベントリスナー設定 (一部変更あり) ---
+    finishButton.addEventListener('click', () => { clearInterval(studyTimer); releaseWakeLock(); timerState = 'stopped'; localStorage.removeItem('timerState'); const studyMinutes = Math.floor(studySeconds / 60); const breakMinutes = Math.floor(breakSeconds / 60); if (studyMinutes > 0) { studyData[date].minutes = (studyData[date].minutes || 0) + studyMinutes; saveData(); } resultText.innerHTML = `今日の勉強時間: <strong>${studyMinutes}分</strong><br>休憩時間: ${breakMinutes}分`; showScreen('result'); });
+    passwordSubmitButton.addEventListener('click', () => { passwordInput.style.borderColor = 'green'; confirmArea.style.display = 'block'; passwordSubmitButton.style.display = 'none'; passwordInput.disabled = true; });
+    
+    // ▼▼▼ スタンプ帳表示時のrenderCalendar呼び出しを修正 ▼▼▼
+    goToStampBookButton.addEventListener('click', () => { loadData(); const totalM = updateTotal(studyData, totalTimeEl); updateRewardDisplay(totalM); renderCalendar(stampCard, studyData, true); showScreen('stampBook'); });
+
+    historyButton.addEventListener('click', () => { const historyKeys = Object.keys(localStorage).filter(k => k.startsWith('studyData-')).sort().reverse(); if (historyKeys.length === 0) { alert('過去の記録はありません。'); return; } monthSelector.innerHTML = ''; historyKeys.forEach(key => { const [, y, m] = key.split('-'); const option = document.createElement('option'); option.value = key; option.textContent = `${y}年${parseInt(m, 10) + 1}月`; monthSelector.appendChild(option); }); monthSelector.dispatchEvent(new Event('change')); showScreen('history'); });
+    monthSelector.addEventListener('change', () => { const selectedKey = monthSelector.value; const historyData = JSON.parse(localStorage.getItem(selectedKey)); renderCalendar(historyCard, historyData, false); const totalM = historyData.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0); historySummary.textContent = `合計勉強時間: ${totalM}分`; });
+    
+    // (その他のイベントリスナーは変更なし)
     startButton.addEventListener('click', () => { studySeconds = 0; breakSeconds = 0; startStudyTimer(); requestWakeLock(); startButton.style.display = 'none'; duringStudyButtons.style.display = 'block'; });
     breakButton.addEventListener('click', () => { const minutes = parseInt(prompt('何分休憩しますか？（半角数字）', '5'), 10); if (minutes && minutes > 0) { clearInterval(studyTimer); releaseWakeLock(); startBreakAlarm(minutes); duringStudyButtons.style.display = 'none'; duringBreakButtons.style.display = 'none'; studyTimerDisplay.style.display = 'none'; breakTimerDisplay.style.display = 'block'; timerTitle.textContent = "きゅうけい中..."; } });
     resumeButton.addEventListener('click', () => { requestWakeLock(); startStudyTimer(); duringBreakButtons.style.display = 'none'; duringStudyButtons.style.display = 'block'; breakTimerDisplay.style.display = 'none'; studyTimerDisplay.style.display = 'block'; timerTitle.textContent = "しゅくだいタイマー"; });
-    finishButton.addEventListener('click', () => { clearInterval(studyTimer); releaseWakeLock(); timerState = 'stopped'; localStorage.removeItem('timerState'); const studyMinutes = Math.floor(studySeconds / 60); const breakMinutes = Math.floor(breakSeconds / 60); if (studyMinutes > 0) { studyData[date].minutes = (studyData[date].minutes || 0) + studyMinutes; saveData(); } resultText.innerHTML = `今日の勉強時間: <strong>${studyMinutes}分</strong><br>休憩時間: ${breakMinutes}分`; showScreen('result'); });
-    passwordSubmitButton.addEventListener('click', () => { passwordInput.style.borderColor = 'green'; confirmArea.style.display = 'block'; passwordSubmitButton.style.display = 'none'; passwordInput.disabled = true; });
-    goToStampBookButton.addEventListener('click', () => { loadData(); const totalM = updateTotal(studyData, totalTimeEl); updateRewardDisplay(totalM); renderCalendar(stampCard, studyData); showScreen('stampBook'); });
     backToTimerButton.addEventListener('click', () => { resetTimerState(); showScreen('timer'); });
     userNameInput.addEventListener('change', saveData);
     goalTimeInput.addEventListener('change', () => { saveData(); const totalM = updateTotal(studyData, totalTimeEl); updateRewardDisplay(totalM); });
-    historyButton.addEventListener('click', () => { const historyKeys = Object.keys(localStorage).filter(k => k.startsWith('studyData-')).sort().reverse(); if (historyKeys.length === 0) { alert('過去の記録はありません。'); return; } monthSelector.innerHTML = ''; historyKeys.forEach(key => { const [, y, m] = key.split('-'); const option = document.createElement('option'); option.value = key; option.textContent = `${y}年${parseInt(m, 10) + 1}月`; monthSelector.appendChild(option); }); monthSelector.dispatchEvent(new Event('change')); showScreen('history'); });
-    monthSelector.addEventListener('change', () => { const selectedKey = monthSelector.value; const historyData = JSON.parse(localStorage.getItem(selectedKey)); renderCalendar(historyCard, historyData); const totalM = historyData.reduce((sum, item) => sum + (Number(item.minutes) || 0), 0); historySummary.textContent = `合計勉強時間: ${totalM}分`; });
     historyBackButton.addEventListener('click', () => showScreen('stampBook'));
     const fullResetButton = document.getElementById('full-reset-button');
     if (fullResetButton) { fullResetButton.addEventListener('click', () => { const enteredPassword = prompt('全データをリセットするには、保護者のパスワードを入力してください。'); if (enteredPassword === null) { alert('リセットはキャンセルされました。'); return; } if (enteredPassword === PASSWORD) { const isConfirmed = confirm('パスワードが認証されました。\n\n本当にすべてのデータ（今までの月の記録、名前、目標）を削除しますか？\nこの操作は元に戻せません。'); if (isConfirmed) { localStorage.clear(); alert('すべてのデータをリセットしました。ページを再読み込みします。'); location.reload(); } else { alert('リセットはキャンセルされました。'); } } else { alert('パスワードが違います。リセットはキャンセルされました。'); } }); }

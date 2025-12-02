@@ -35,7 +35,7 @@ h1, h2, h3 { color: #4682b4; }
 #history-card { margin-top: 20px; }
 .stamp-slot {
     background-color: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-    cursor: pointer; /* ▼▼▼ クリックできることを示すカーソルに変更 ▼▼▼ */
+    cursor: pointer; 
     transition: transform 0.2s, box-shadow 0.2s;
 }
 .stamp-slot:hover {
@@ -63,7 +63,9 @@ h1, h2, h3 { color: #4682b4; }
     .timer-display { font-size: 18vw; }
     .button { padding: 12px 20px; font-size: 1em; width: 80%; box-sizing: border-box; }
     .button-group .button { width: auto; font-size: 0.8em; padding: 8px 12px; }
-    #during-study-buttons .button, #during-break-buttons .button { width: 45%; }
+    #during-study-buttons .button { width: 45%; }
+    #during-break-buttons .button { width: 45%; }
+    #system-paused-buttons .button { width: 80%; }
     #stamp-book-header { flex-direction: column; gap: 15px; }
     #user-info, #month-info, #goal-info { width: 100%; box-sizing: border-box; }
     #stamp-card, #history-card { gap: 5px; }
